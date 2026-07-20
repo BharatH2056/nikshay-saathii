@@ -1,0 +1,350 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --color-cream: #FDFCF0;
+  --color-dark: #FDFCF0; /* Compatibility alias */
+  --color-pale: #2C332D;
+  --color-border: #E9E9E2;
+  --color-white: #FFFFFF;
+  --color-charcoal: #FFFFFF; /* Compatibility alias */
+  --color-surface: #F8F9F5;
+  --color-coral: #D98C5F;
+  --color-muted: #6B705C;
+  --color-teal: #CCD5AE;
+  --color-warn: #E7AB79;
+  --color-blood: #B24C3D;
+  
+  --color-risk-red: #B24C3D;
+  --color-risk-yellow: #E7AB79;
+  --color-risk-green: #4A5D4E;
+}
+
+/* Base custom variables for inline styles and fallbacks */
+:root {
+  --cream: #FDFCF0;
+  --dark: #FDFCF0; /* Compatibility alias */
+  --pale: #2C332D;
+  --border: #E9E9E2;
+  --white: #FFFFFF;
+  --charcoal: #FFFFFF; /* Compatibility alias */
+  --surface: #F8F9F5;
+  --coral: #D98C5F;
+  --coral-dim: rgba(217, 140, 95, 0.08);
+  --muted: #6B705C;
+  --teal: #CCD5AE;
+  --warn: #E7AB79;
+  --blood: #B24C3D;
+
+  --risk-red: #B24C3D;
+  --risk-yellow: #E7AB79;
+  --risk-green: #4A5D4E;
+
+  --risk-red-dim: rgba(178, 76, 61, 0.08);
+  --risk-yellow-dim: rgba(231, 171, 121, 0.08);
+  --risk-green-dim: rgba(74, 93, 78, 0.08);
+  
+  --glass-border: rgba(74, 93, 78, 0.12);
+  --accent: #D98C5F;
+}
+
+/* Base body adjustments */
+body {
+  background-color: #FDFCF0;
+  color: #2C332D;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+/* Force standard light theme readability in main content */
+main, .page-enter {
+  color: #2C332D !important;
+}
+
+/* Ensure text inside the main area that was white for dark theme is now beautiful dark text */
+main .text-white, .page-enter .text-white {
+  color: #2C332D !important;
+}
+
+/* Titles and labels */
+main h1, main h2, main h3, main h4, main h5, main h6,
+.page-enter h1, .page-enter h2, .page-enter h3, .page-enter h4, .page-enter h5, .page-enter h6 {
+  color: #2C332D !important;
+}
+
+/* Main text paragraphs and text elements */
+main .text-pale, .page-enter .text-pale {
+  color: #2C332D !important;
+}
+
+main .text-muted, .page-enter .text-muted {
+  color: #6B705C !important;
+}
+
+/* Sidebar Specific Overrides (remains elegant dark-forest-green as per Design HTML) */
+aside {
+  background-color: #4A5D4E !important;
+  border-right: 1px solid rgba(253, 252, 240, 0.1) !important;
+}
+
+aside * {
+  color: #FDFCF0 !important;
+}
+
+aside p, aside span, aside svg {
+  color: rgba(253, 252, 240, 0.75) !important;
+}
+
+aside .active {
+  background-color: rgba(253, 252, 240, 0.1) !important;
+  border-radius: 16px !important;
+  color: #FFFFFF !important;
+}
+
+aside .active * {
+  color: #FFFFFF !important;
+}
+
+aside [style*="var(--coral-dim)"] {
+  background-color: rgba(253, 252, 240, 0.08) !important;
+  border-color: rgba(253, 252, 240, 0.15) !important;
+}
+
+/* Cards & Containers Style Overrides */
+.card, 
+[style*="var(--charcoal)"],
+[class*="bg-charcoal"] {
+  background-color: #FFFFFF !important;
+  border: 1px solid #E9E9E2 !important;
+  border-radius: 28px !important;
+  box-shadow: 0 4px 18px -4px rgba(74, 93, 78, 0.04), 0 2px 4px -1px rgba(74, 93, 78, 0.02) !important;
+  padding: 24px !important;
+}
+
+/* Stat Cards Variant Styles */
+.stat-card-red {
+  background-color: #F8F9F5 !important;
+  border: 1px solid #E9E9E2 !important;
+  border-left: 4px solid #B24C3D !important;
+}
+.stat-card-warn {
+  background-color: #FEFAE0 !important;
+  border: 1px solid #E9E4D0 !important;
+  border-left: 4px solid #E7AB79 !important;
+}
+.stat-card-teal {
+  background-color: #E9EDC9 !important;
+  border: 1px solid #D6DBB2 !important;
+  border-left: 4px solid #4A5D4E !important;
+}
+.stat-card-accent {
+  background-color: #CCD5AE !important;
+  border: 1px solid #B9C29D !important;
+  border-left: 4px solid #D98C5F !important;
+}
+
+/* Badges & Status Pills */
+.risk-pill-red {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #F5E6DC !important;
+  color: #B24C3D !important;
+  border: 1px solid rgba(178, 76, 61, 0.2) !important;
+}
+
+.risk-pill-yellow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #FEFAE0 !important;
+  color: #805300 !important;
+  border: 1px solid rgba(176, 128, 62, 0.2) !important;
+}
+
+.risk-pill-green {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #E9EDC9 !important;
+  color: #4A5D4E !important;
+  border: 1px solid rgba(74, 93, 78, 0.2) !important;
+}
+
+/* Ensure bullet points inside pills have solid background */
+.risk-pill-red span, .risk-pill-yellow span, .risk-pill-green span {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+}
+
+/* Input Fields & Forms */
+input, select, textarea {
+  background-color: #FFFFFF !important;
+  border: 1px solid #E9E9E2 !important;
+  color: #2C332D !important;
+  border-radius: 12px !important;
+  padding: 10px 14px !important;
+  font-family: inherit !important;
+  outline: none !important;
+  transition: all 0.2s ease !important;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: #4A5D4E !important;
+  box-shadow: 0 0 0 2px rgba(74, 93, 78, 0.1) !important;
+}
+input::placeholder {
+  color: #6B705C !important;
+  opacity: 0.75 !important;
+}
+
+/* Buttons */
+.btn-primary, 
+button[class*="btn-primary"], 
+button.bg-coral,
+button[style*="var(--coral)"],
+main button.bg-\[\#D98C5F\],
+main button.bg-coral {
+  background-color: #D98C5F !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  border-radius: 16px !important;
+  padding: 12px 24px !important;
+  border: none !important;
+  box-shadow: 0 4px 14px 0 rgba(217, 140, 95, 0.25) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+.btn-primary *, button[class*="btn-primary"] *, button.bg-coral * {
+  color: #FFFFFF !important;
+}
+.btn-primary:hover {
+  background-color: #c77a4d !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-ghost, 
+button[class*="btn-ghost"],
+button.border-border,
+[style*="border: 1px solid var(--border)"] button {
+  background-color: #FFFFFF !important;
+  color: #2C332D !important;
+  border: 1px solid #E9E9E2 !important;
+  border-radius: 16px !important;
+  padding: 10px 20px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+.btn-ghost *, button[class*="btn-ghost"] * {
+  color: #2C332D !important;
+}
+.btn-ghost:hover {
+  background-color: #F8F9F5 !important;
+  border-color: #D6D6CC !important;
+}
+
+.btn-teal,
+button[class*="btn-teal"] {
+  background-color: #4A5D4E !important;
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+  border-radius: 16px !important;
+  padding: 12px 24px !important;
+  border: none !important;
+  box-shadow: 0 4px 14px 0 rgba(74, 93, 78, 0.15) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+.btn-teal *, button[class*="btn-teal"] * {
+  color: #FFFFFF !important;
+}
+.btn-teal:hover {
+  background-color: #3b4b3e !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Modals overlay override */
+.fixed.inset-0.z-50 {
+  background-color: rgba(44, 51, 45, 0.6) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+/* Bottom Nav bar on mobile */
+nav.fixed.bottom-6 {
+  background: rgba(253, 252, 240, 0.88) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(74, 93, 78, 0.15) !important;
+  box-shadow: 0 10px 30px -10px rgba(74, 93, 78, 0.2) !important;
+}
+nav.fixed.bottom-6 .text-muted {
+  color: #6B705C !important;
+}
+nav.fixed.bottom-6 .text-accent {
+  color: #4A5D4E !important;
+}
+
+/* Table Overrides */
+table thead tr {
+  background-color: #F8F9F5 !important;
+  border-bottom: 1px solid #E9E9E2 !important;
+}
+table thead th {
+  color: #6B705C !important;
+  font-weight: 600 !important;
+  font-family: "JetBrains Mono", monospace !important;
+}
+table tbody tr {
+  border-bottom: 1px solid #F1F2ED !important;
+  transition: background-color 0.15s ease;
+}
+table tbody tr:hover {
+  background-color: #F8F9F5 !important;
+}
+table tbody td {
+  color: #2C332D !important;
+}
+table tbody td * {
+  color: #2C332D !important;
+}
+
+/* Advisory / Alert banner overrides */
+div[style*="rgba(239,68,68,0.06)"] {
+  background-color: #F5E6DC !important;
+  border-color: rgba(178, 76, 61, 0.2) !important;
+}
+div[style*="rgba(239,68,68,0.06)"] span {
+  color: #B24C3D !important;
+}
+
+/* Recharts Tooltip Overrides */
+div[style*="rgba(12,12,12,0.95)"] {
+  background-color: #FFFFFF !important;
+  border-color: #E9E9E2 !important;
+  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05) !important;
+}
+div[style*="rgba(12,12,12,0.95)"] p {
+  color: #2C332D !important;
+}
+
+/* Skeletons & Shimmers */
+.skeleton {
+  background-color: #F1F2ED !important;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+  border-radius: 12px !important;
+}

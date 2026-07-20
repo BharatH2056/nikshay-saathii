@@ -1,0 +1,51 @@
+name: Nikshay Saathi CI Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_DB: test_db
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci || npm install
+
+      - name: Static Type-Checking (TypeScript)
+        run: npm run lint
+
+      - name: Run Integration Tests
+        env:
+          SQL_HOST: localhost
+          SQL_USER: test_user
+          SQL_PASSWORD: test_password
+          SQL_DB_NAME: test_db
+          JWT_SECRET: nikshay_saathi_capstone_jwt_secret_64_character_long_key_development_only
+        run: npm test

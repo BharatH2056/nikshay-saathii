@@ -1,0 +1,32 @@
+[
+  {
+    "question": "What should I eat during TB treatment?",
+    "answer": "A balanced, high-protein diet is recommended. Eat eggs, milk, soy, green vegetables, fruits, and grains to help your body recover. Avoid alcohol and smoking.",
+    "category": "diet",
+    "keywords": ["eat", "food", "diet", "nutrition", "meal", "milk", "eggs"]
+  },
+  {
+    "question": "Can I stop my TB medication when I feel better?",
+    "answer": "No. Never stop your medication early. Even if symptoms disappear, some bacteria remain. Stopping early can cause drug-resistant TB, which is harder to cure.",
+    "category": "medication",
+    "keywords": ["stop", "skip", "better", "cured", "pause", "halt"]
+  },
+  {
+    "question": "What are the common side effects of DOTS medicines?",
+    "answer": "Mild side effects include orange-colored urine (which is normal and harmless), mild nausea, or loss of appetite. Contact your ASHA worker immediately if you have severe vomiting, yellow eyes, or severe abdominal pain.",
+    "category": "side-effects",
+    "keywords": ["side effects", "nausea", "urine", "vomit", "rash", "fever"]
+  },
+  {
+    "question": "How do I deal with social stigma surrounding TB?",
+    "answer": "TB is fully curable. It spreads through air, not touch. Anyone can get TB. Speak to your health worker, share your feelings with family, and stay positive. You are not alone.",
+    "category": "stigma",
+    "keywords": ["stigma", "isolate", "shame", "scared", "friends", "society"]
+  },
+  {
+    "question": "What happens if I miss a dose of TB medicine?",
+    "answer": "If you miss a dose, take it as soon as you remember. However, if it is close to your next scheduled dose, skip the missed one. Do not take a double dose. Report it to your health worker.",
+    "category": "medication",
+    "keywords": ["miss", "forget", "missed", "yesterday", "double dose"]
+  }
+]
