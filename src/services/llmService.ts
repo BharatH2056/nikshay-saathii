@@ -18,7 +18,7 @@ function getGeminiClient(): GoogleGenAI | null {
       apiKey: geminiKey,
       httpOptions: {
         headers: {
-          'User-Agent': 'aistudio-build',
+          'User-Agent': 'nikshay-saathi',
         }
       }
     });
