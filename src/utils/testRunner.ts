@@ -1,4 +1,4 @@
-import { db } from '../db';
+import { db, seedDatabase } from '../db';
 import { patients, adherenceLogs, escalations } from '../db/schema';
 import { computeRisk } from '../services/riskClassifier';
 import { checkAndAutoResolve } from '../services/escalationEngine';
@@ -171,6 +171,9 @@ export async function runEngineTests(): Promise<{ success: boolean; results: Tes
 if (process.argv[1] && (process.argv[1].endsWith('testRunner.ts') || process.argv[1].endsWith('testRunner.js'))) {
   (async () => {
     let overallSuccess = true;
+
+    console.log('[TEST RUNNER] Seeding database with demo data...');
+    await seedDatabase();
 
     // ── Suite 1: Engine Tests (risk classifier / escalation) ─────────────────
     console.log('[TEST RUNNER] Suite 1: Engine & Integration Tests...');
