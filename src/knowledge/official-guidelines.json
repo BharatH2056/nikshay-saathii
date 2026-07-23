@@ -1,0 +1,47 @@
+{
+  "_metadata": {
+    "version": "2026.1-NTEP-WHO",
+    "last_reviewed_date": "2026-07-01",
+    "reviewed_by": "National Tuberculosis Elimination Programme (NTEP) & Medical Advisory Committee",
+    "update_policy": "Manual human medical review and sign-off required for all modifications. Automated scraping is strictly prohibited.",
+    "disclaimer": "Official medical guidelines for decision support only. Clinical decisions require independent physician approval."
+  },
+  "guidelines": [
+    {
+      "id": "ntep-2024-sec4.1",
+      "guideline": "India NTEP Guidelines 2024",
+      "section": "Section 4.1",
+      "title": "Management of Missed Doses in Standard FDC Regimen",
+      "content": "For patients on Daily Fixed-Dose Combination (FDC) therapy, if 2 or more consecutive doses are missed during the Intensive Phase, an immediate clinical evaluation by a medical officer is mandatory. Assess liver function (ALT/AST) and check for drug resistance using Line Probe Assay (LPA) or CBNAAT if treatment interruption exceeds 14 days.",
+      "keywords": ["missed doses", "intensive phase", "fdc", "interruption", "cbnaat", "liver function"],
+      "citation": "India National TB Elimination Programme (NTEP) Guidelines (2024), Sec 4.1, p. 48-52"
+    },
+    {
+      "id": "ntep-2024-sec6.3",
+      "guideline": "India NTEP Guidelines 2024",
+      "section": "Section 6.3",
+      "title": "Adverse Drug Reaction Management - Hepatotoxicity",
+      "content": "Isoniazid, Rifampicin, and Pyrazinamide can cause drug-induced liver injury (DILI). If patient presents with persistent vomiting, jaundice, or ALT > 3x upper limit of normal with symptoms, immediately withhold all hepatotoxic drugs. Substitute with non-hepatotoxic drugs (Ethambutol, Levofloxacin) under specialist guidance.",
+      "keywords": ["hepatotoxicity", "vomiting", "jaundice", "liver injury", "dili", "side effects"],
+      "citation": "India National TB Elimination Programme (NTEP) Guidelines (2024), Sec 6.3, p. 89-94"
+    },
+    {
+      "id": "who-2023-module4",
+      "guideline": "WHO Consolidated Guidelines on Tuberculosis (2023)",
+      "section": "Module 4: Treatment - Drug-Susceptible TB",
+      "title": "Adherence Support Mechanisms",
+      "content": "Digital adherence technologies (DAT) including SMS reminders and electronic medication monitor boxes should be combined with social and material support to improve treatment completion rates. Routine medical officer review is recommended for high-risk patients showing < 80% adherence over any 30-day window.",
+      "keywords": ["adherence", "who module 4", "digital adherence", "high risk", "completion"],
+      "citation": "WHO Consolidated Guidelines on Tuberculosis (2023), Module 4: Treatment, Recommendation 3.2"
+    },
+    {
+      "id": "ntep-2024-sec8.2",
+      "guideline": "India NTEP Guidelines 2024",
+      "section": "Section 8.2",
+      "title": "Refill and Supply Chain Interruption Response",
+      "content": "When medication supply drops below 7 days, a automated refill alert must trigger a health worker contact. If patient runs out of medication completely, resume regimen with adherence counseling and verify patient retains current pill box.",
+      "keywords": ["refill", "supply", "stockout", "pill count"],
+      "citation": "India National TB Elimination Programme (NTEP) Guidelines (2024), Sec 8.2, p. 112"
+    }
+  ]
+}

@@ -19,6 +19,7 @@ import reportsRouter from './src/routes/reports';
 import webhooksRouter from './src/routes/webhooks';
 import simulateRouter from './src/routes/simulate';
 import adminRouter from './src/routes/admin';
+import doctorRouter from './src/routes/doctorRoutes';
 
 import { seedDatabase, db } from './src/db';
 import { healthWorkers, reminders, escalations, patients } from './src/db/schema';
@@ -99,6 +100,7 @@ async function startServer() {
   app.use('/v1/visits', visitsRouter);
   app.use('/v1/reports', reportsRouter);
   app.use('/v1/admin', adminRouter);
+  app.use('/v1/doctor', doctorRouter);
   app.use('/v1/webhooks', webhookLimiter, webhooksRouter);
   app.use('/v1/simulate', simulateRouter);
 

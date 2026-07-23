@@ -2,6 +2,7 @@ import { db } from '../db';
 import { patients, adherenceLogs, escalations } from '../db/schema';
 import { computeRisk } from '../services/riskClassifier';
 import { checkAndAutoResolve } from '../services/escalationEngine';
+import { runHermesVerificationSuite } from './hermesVerificationTest';
 import { eq, and } from 'drizzle-orm';
 import crypto from 'crypto';
 
@@ -168,10 +169,19 @@ export async function runEngineTests(): Promise<{ success: boolean; results: Tes
 
 // Self-run hook for CLI & CI Pipeline integration
 if (process.argv[1] && (process.argv[1].endsWith('testRunner.ts') || process.argv[1].endsWith('testRunner.js'))) {
-  console.log('[TEST RUNNER] Bootstrapping integration and risk classification tests...');
-  runEngineTests().then(res => {
-    console.log(`\n[TEST RUNNER] Results summary: Passed ${res.results.filter(r => r.passed).length} of ${res.results.length}`);
-    res.results.forEach(r => {
+  (async () => {
+    let overallSuccess = true;
+
+    // ── Suite 1: Engine Tests (risk classifier / escalation) ─────────────────
+    console.log('[TEST RUNNER] Suite 1: Engine & Integration Tests...');
+    const engineRes = await runEngineTests().catch(err => {
+      console.error('[TEST RUNNER FATAL] Engine suite crashed:', err);
+      overallSuccess = false;
+      return { success: false, results: [] };
+    });
+
+    console.log(`\n[TEST RUNNER] Engine suite: Passed ${engineRes.results.filter(r => r.passed).length} of ${engineRes.results.length}`);
+    engineRes.results.forEach(r => {
       console.log(` ${r.passed ? '✅' : '❌'} ${r.name}`);
       if (!r.passed) {
         console.log(`    -> Expected: ${r.expected}`);
@@ -179,9 +189,18 @@ if (process.argv[1] && (process.argv[1].endsWith('testRunner.ts') || process.arg
         if (r.error) console.log(`    -> Error:    ${r.error}`);
       }
     });
-    process.exit(res.success ? 0 : 1);
-  }).catch(err => {
-    console.error('[TEST RUNNER FATAL] Suite run crashed:', err);
-    process.exit(1);
-  });
+    if (!engineRes.success) overallSuccess = false;
+
+    // ── Suite 2: Hermes Integration Verification ──────────────────────────────
+    console.log('\n[TEST RUNNER] Suite 2: Hermes Two-Track Integration Verification...');
+    await runHermesVerificationSuite().catch(err => {
+      // runHermesVerificationSuite already prints per-test [PASS]/[FAIL] lines.
+      // It throws on any failures, which we catch here to unify exit handling.
+      console.error('[TEST RUNNER] Hermes verification suite failed:', err.message);
+      overallSuccess = false;
+    });
+
+    console.log(`\n[TEST RUNNER] All suites complete. Overall: ${overallSuccess ? 'PASSED ✅' : 'FAILED ❌'}`);
+    process.exit(overallSuccess ? 0 : 1);
+  })();
 }

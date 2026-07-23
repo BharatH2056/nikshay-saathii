@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../hooks/useAuthStore';
-import { LayoutDashboard, Users, AlertTriangle, Download, Settings, LogOut, Terminal, Activity, RefreshCw } from 'lucide-react';
+import { LayoutDashboard, Users, AlertTriangle, Download, Settings, LogOut, Terminal, Activity, RefreshCw, Stethoscope } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '../../api/client';
 
@@ -9,20 +9,14 @@ export default function Sidebar() {
   const { user, logout, setRole } = useAuthStore();
   const navigate = useNavigate();
 
-  const navItems = user?.role === 'admin'
-    ? [
-        { to: '/dashboard',     Icon: LayoutDashboard, label: 'Executive' },
-        { to: '/escalations',   Icon: AlertTriangle,    label: 'Escalations', hasAlert: true },
-        { to: '/admin/workers', Icon: Users,            label: 'CHW Staff' },
-        { to: '/simulator',     Icon: Terminal,         label: 'Simulator' },
-        { to: '/settings',      Icon: Settings,         label: 'Settings' },
-      ]
-    : [
-        { to: '/dashboard',   Icon: LayoutDashboard, label: 'Dashboard' },
-        { to: '/patients',    Icon: Users,            label: 'My Patients' },
-        { to: '/simulator',   Icon: Terminal,         label: 'Simulator' },
-        { to: '/settings',    Icon: Settings,         label: 'Settings' },
-      ];
+  const navItems = [
+    { to: '/dashboard',        Icon: LayoutDashboard, label: user?.role === 'admin' ? 'Executive' : 'Dashboard' },
+    { to: '/doctor-dashboard', Icon: Stethoscope,     label: 'Doctor Portal' },
+    { to: '/escalations',      Icon: AlertTriangle,   label: 'Escalations', hasAlert: true },
+    ...(user?.role === 'admin' ? [{ to: '/admin/workers', Icon: Users, label: 'CHW Staff' }] : [{ to: '/patients', Icon: Users, label: 'My Patients' }]),
+    { to: '/simulator',        Icon: Terminal,        label: 'Simulator' },
+    { to: '/settings',         Icon: Settings,        label: 'Settings' },
+  ];
 
   const { data: openEscalations = [] } = useQuery({
     queryKey: ['escalations', 'open'],

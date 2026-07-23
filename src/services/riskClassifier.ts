@@ -59,7 +59,7 @@ export async function computeRisk(patientId: string) {
     })
     .where(eq(patients.id, patientId));
 
-  // 8. If Red, auto-create escalation
+  // 8. If Red, auto-create escalation with Hermes 4 draft summary
   if (newRisk === 'red') {
     const existingEsc = await db.select()
       .from(escalations)
@@ -69,17 +69,43 @@ export async function computeRisk(patientId: string) {
       ))
       .limit(1);
 
-    if (existingEsc.length === 0) {
+    const existingPending = await db.select()
+      .from(escalations)
+      .where(and(
+        eq(escalations.patientId, patientId),
+        eq(escalations.status, 'pending_doctor_review')
+      ))
+      .limit(1);
+
+    if (existingEsc.length === 0 && existingPending.length === 0) {
       const patientRecord = await db.select().from(patients).where(eq(patients.id, patientId)).limit(1);
       if (patientRecord.length > 0 && patientRecord[0].healthWorkerId) {
         const decryptedP = decryptPatient(patientRecord[0]);
-        await db.insert(escalations).values({
-          patientId,
-          healthWorkerId: decryptedP.healthWorkerId,
-          type: 'MISSED_DOSES',
-          reason: `Patient risk state dropped to Red. Adherence rate: ${adherenceRate.toFixed(0)}%. Streak: ${currentStreak}.`,
-          status: 'open',
-        });
+        
+        // Auto-populate doctor queue using Hermes 4 Patient Harness draftEscalationSummary
+        try {
+          const { draftEscalationSummary } = await import('../agents/tools/patientTools');
+          await draftEscalationSummary({
+            patientId,
+            type: 'MISSED_DOSES',
+            reason: `Patient risk state dropped to Red. Adherence rate: ${adherenceRate.toFixed(0)}%. Streak: ${currentStreak}.`,
+            aiSummary: `Patient ${decryptedP.fullName} (Regimen: ${decryptedP.regimenType}) has dropped to RED risk status. 7-day adherence is ${adherenceRate.toFixed(0)}% with ${consecutiveMissed} consecutive missed doses.`,
+            aiSuggestedAction: `Schedule immediate in-person DOTS health worker home visit within 24-48 hours. Assess for adverse drug reactions (hepatotoxicity/nausea) and evaluate adherence barrier.`
+          });
+          console.log(`[RISK ENGINE] Auto-populated doctor queue (pending_doctor_review) for RED patient: ${patientId}`);
+        } catch (harnessErr) {
+          console.error('[RISK ENGINE] Failed to auto-generate Hermes draft escalation, falling back to standard open escalation:', harnessErr);
+          await db.insert(escalations).values({
+            patientId,
+            healthWorkerId: decryptedP.healthWorkerId,
+            type: 'MISSED_DOSES',
+            reason: `Patient risk state dropped to Red. Adherence rate: ${adherenceRate.toFixed(0)}%. Streak: ${currentStreak}.`,
+            status: 'pending_doctor_review',
+            aiSummary: `Patient risk state dropped to Red. Adherence rate: ${adherenceRate.toFixed(0)}%. Streak: ${currentStreak}.`,
+            aiSuggestedAction: `Recommend health worker contact within 24-48 hours.`,
+            openedAt: new Date(),
+          });
+        }
 
         // Notify caregiver of missed doses
         if (decryptedP.caregiverPhone && decryptedP.caregiverName) {

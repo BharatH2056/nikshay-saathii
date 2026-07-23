@@ -8,7 +8,7 @@ export const healthWorkers = pgTable('health_workers', {
   email: text('email').notNull().unique(),
   phone: text('phone').notNull().unique(),
   passwordHash: text('password_hash').notNull(),
-  role: text('role').notNull().default('hw'), // 'hw' | 'admin'
+  role: text('role').notNull().default('hw'), // 'hw' | 'admin' | 'doctor'
   region: text('region'),
   isActive: boolean('is_active').default(true),
   twoFactorSecret: text('two_factor_secret'),
@@ -91,11 +91,17 @@ export const escalations = pgTable('escalations', {
   healthWorkerId: text('health_worker_id').references(() => healthWorkers.id).notNull(),
   type: text('type').notNull(), // 'MISSED_DOSES' | 'SYMPTOM_SEVERE' | 'REFILL_ALERT'
   reason: text('reason').notNull(),
-  status: text('status').notNull().default('open'), // 'open' | 'acknowledged' | 'resolved' | 'auto_resolved'
+  status: text('status').notNull().default('open'), // 'open' | 'pending_doctor_review' | 'approved' | 'rejected' | 'acknowledged' | 'resolved' | 'auto_resolved'
+  aiSummary: text('ai_summary'),
+  aiSuggestedAction: text('ai_suggested_action'),
+  guidelineCitations: jsonb('guideline_citations'),
   openedAt: timestamp('opened_at').defaultNow(),
   acknowledgedAt: timestamp('acknowledged_at'),
   resolvedAt: timestamp('resolved_at'),
   resolvedBy: text('resolved_by').references(() => healthWorkers.id),
+  reviewedBy: text('reviewed_by').references(() => healthWorkers.id),
+  reviewedAt: timestamp('reviewed_at'),
+  reviewNotes: text('review_notes'),
 });
 
 export const qaSessions = pgTable('qa_sessions', {

@@ -42,7 +42,10 @@ export function getSecret(key: string, fallbackValue: string = '', isRequiredInP
 
   // 2. Try standard environment variables if not in mounted secrets
   if (value === undefined) {
-    value = process.env[key];
+    const envVal = process.env[key];
+    if (envVal !== undefined) {
+      value = envVal;
+    }
   }
 
   // 3. Enforce strict, fail-closed check if running in production and key falls back to insecure or is missing
@@ -70,5 +73,5 @@ export function getSecret(key: string, fallbackValue: string = '', isRequiredInP
     }
   }
 
-  return value !== undefined ? value : fallbackValue;
+  return (value !== undefined && value !== null) ? value : (fallbackValue ?? '');
 }

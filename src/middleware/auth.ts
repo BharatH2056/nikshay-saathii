@@ -37,6 +37,14 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
       };
       return next();
     }
+    if (token === 'doctor-token') {
+      req.user = {
+        id: '33333333-3333-3333-3333-333333333333',
+        email: 'dr.sharma@nikshay.in',
+        role: 'doctor'
+      };
+      return next();
+    }
   }
 
   try {
@@ -54,3 +62,18 @@ export const adminOnly = (req: AuthRequest, res: Response, next: NextFunction) =
   }
   next();
 };
+
+export const doctorOnly = (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (!req.user || req.user.role !== 'doctor') {
+    return res.status(403).json({ error: 'Access denied: Doctor permissions required' });
+  }
+  next();
+};
+
+export const doctorOrAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (!req.user || (req.user.role !== 'doctor' && req.user.role !== 'admin')) {
+    return res.status(403).json({ error: 'Access denied: Doctor or Admin permissions required' });
+  }
+  next();
+};
+
