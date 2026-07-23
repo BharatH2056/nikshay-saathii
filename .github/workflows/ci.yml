@@ -1,15 +1,12 @@
 name: Nikshay Saathi CI Pipeline
-
 on:
   push:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres:15
@@ -24,23 +21,27 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-
       - name: Install Dependencies
         run: npm ci || npm install
-
+      - name: Push Database Schema
+        env:
+          SQL_HOST: localhost
+          SQL_USER: test_user
+          SQL_PASSWORD: test_password
+          SQL_DB_NAME: test_db
+          SQL_ADMIN_USER: test_user
+          SQL_ADMIN_PASSWORD: test_password
+        run: npx drizzle-kit push --config=src/db/drizzle.config.ts
       - name: Static Type-Checking (TypeScript)
         run: npm run lint
-
       - name: Run Integration Tests
         env:
           SQL_HOST: localhost
