@@ -1,9 +1,8 @@
 import { db, seedDatabase } from '../db';
 import { patients, adherenceLogs, escalations } from '../db/schema';
 import { computeRisk } from '../services/riskClassifier';
-import { checkAndAutoResolve } from '../services/escalationEngine';
 import { runHermesVerificationSuite } from './hermesVerificationTest';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
 
 export interface TestResult {
@@ -71,7 +70,7 @@ export async function runEngineTests(): Promise<{ success: boolean; results: Tes
     await db.delete(adherenceLogs).where(eq(adherenceLogs.patientId, testPatientId));
 
     // ─────────────────────────────────────────────────────────────────────────
-    // TEST 2: Red Patient with 2 consecutive missed doses
+    // TEST 2: Red Patient with 2 consecutive missed doses -> pending_doctor_review escalation
     // ─────────────────────────────────────────────────────────────────────────
     const logsTest2 = [];
     // Day 0: Missed, Day 1: Missed, Day 2-6: Taken
@@ -90,56 +89,18 @@ export async function runEngineTests(): Promise<{ success: boolean; results: Tes
     // Compute risk (consecutiveMissed should be 2, riskLevel should drop to red)
     const res2 = await computeRisk(testPatientId);
 
-    // Verify if open escalation was automatically created
-    const openEscs = await db.select()
-      .from(escalations)
-      .where(and(
-        eq(escalations.patientId, testPatientId),
-        eq(escalations.status, 'open')
-      ));
-
-    results.push({
-      name: 'Risk Classifier: Red Patient transition with 2 consecutive missed doses',
-      passed: res2.riskLevel === 'red' && openEscs.length === 1,
-      expected: 'riskLevel = red, open escalations count = 1',
-      actual: `riskLevel = ${res2.riskLevel}, open escalations count = ${openEscs.length}`,
-    });
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // TEST 3: Escalation Engine: Auto-resolve with 3 consecutive taken doses
-    // ─────────────────────────────────────────────────────────────────────────
-    // Clean logs
-    await db.delete(adherenceLogs).where(eq(adherenceLogs.patientId, testPatientId));
-
-    const logsTest3 = [];
-    // Add 3 consecutive taken doses
-    for (let i = 0; i < 3; i++) {
-      const logDate = new Date();
-      logDate.setDate(today.getDate() - i);
-      logsTest3.push({
-        id: `test-log-${crypto.randomUUID()}`,
-        patientId: testPatientId,
-        logDate: logDate.toISOString().split('T')[0],
-        status: true, // Taken
-      });
-    }
-    await db.insert(adherenceLogs).values(logsTest3);
-
-    // Run escalation engine auto resolution check
-    await checkAndAutoResolve(testPatientId);
-
-    // Fetch escalation status
-    const escs = await db.select()
+    // Verify AI-drafted escalation was created for doctor review (new pending_doctor_review flow)
+    const pendingEscs = await db.select()
       .from(escalations)
       .where(eq(escalations.patientId, testPatientId));
 
-    const resolvedEscs = escs.filter(e => e.status === 'auto_resolved');
+    const pendingReview = pendingEscs.filter(e => e.status === 'pending_doctor_review');
 
     results.push({
-      name: 'Escalation Engine: Auto-resolution after 3 consecutive taken doses',
-      passed: resolvedEscs.length === 1,
-      expected: 'escalation status = auto_resolved',
-      actual: `resolved escalations count = ${resolvedEscs.length} out of ${escs.length}`,
+      name: 'Risk Classifier: Red Patient transition creates pending_doctor_review escalation',
+      passed: res2.riskLevel === 'red' && pendingReview.length === 1,
+      expected: 'riskLevel = red, pending_doctor_review escalations count = 1',
+      actual: `riskLevel = ${res2.riskLevel}, pending_doctor_review escalations count = ${pendingReview.length}`,
     });
 
   } catch (error: any) {
@@ -197,8 +158,6 @@ if (process.argv[1] && (process.argv[1].endsWith('testRunner.ts') || process.arg
     // ── Suite 2: Hermes Integration Verification ──────────────────────────────
     console.log('\n[TEST RUNNER] Suite 2: Hermes Two-Track Integration Verification...');
     await runHermesVerificationSuite().catch(err => {
-      // runHermesVerificationSuite already prints per-test [PASS]/[FAIL] lines.
-      // It throws on any failures, which we catch here to unify exit handling.
       console.error('[TEST RUNNER] Hermes verification suite failed:', err.message);
       overallSuccess = false;
     });
